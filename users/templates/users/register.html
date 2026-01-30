@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    EduPortal - Register
+{% endblock %}
+
+{% block content %}
+    <h2>Register</h2>
+    <h2>Login to an existing account.</h2>
+    <div class="container">
+        <form class='form-with-validation' action='/users/register/' method='post'>
+            {% csrf_token %}
+            {{ form }}
+            <button class='form-submit'>Submit</button>
+        </form>
+    </div>
+{% endblock %}
