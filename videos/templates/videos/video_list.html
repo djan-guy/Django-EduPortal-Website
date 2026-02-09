@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    EduPortal - Videos
+{% endblock %}
+
+{% block content %}
+    {% if course_name %}
+        <h2>{{ course_name }} Quizzes</h2>
+    {% else %}
+        <h2>All Quizzes</h2>
+    {% endif %}
+    <h2>{{ user.username }}</h2>
+    <div class="container">
+        <h3>Available Functions</h3>
+        <div class="function">
+            <a href="/"> Return to Home</a>
+            {% if user.isTeacher %}
+                <a href="{% url 'videos:video-new' %}"> Upload Video</a>
+            {% endif %}
+        </div>
+    </div>
+        <div class="box">
+            {% if videos %}
+                {% for video in videos %}
+                    <div class="video-container">
+                        <h3>{{ video.title }}</h3>
+                        <iframe width="560" height="315"
+                            src="{{ video.video }}"
+                            frameborder="0"
+                            allowfullscreen>
+                        </iframe>
+                        {% if user.isTeacher %}
+                        <form action="{% url 'videos:video-delete' video.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Delete Video</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+{% endblock %}
