@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Student Results - {{ quiz.name }}
+{% endblock %}
+
+{% block content %}
+<h2>{{ quiz.name }} Student Results</h2>
+<h2>{{ user.username }}</h2>
+<div class="container">
+    <div class="function">
+        <a href="/"> Return to Home</a>
+        <a href="{% url 'quizzes:list' %}">Back to quizzes</a>
+    </div>
+</div>
+    {% if attempts %}
+        {% for attempt in attempts %}
+            <div class="container">
+                <h3>{{ attempt.user.username }}</h3>
+                <p>Score: {{ attempt.obtained_marks }} / {{ attempt.total_marks }}</p>
+                <p>Taken on: {{ attempt.timestamp }}</p>
+                {% for r in attempt.results.all %}
+                    <div class="question-result">
+                        <h4>{{ r.question.text }}</h4>
+                        <p>Student answer: {{ r.user_answer }}</p>
+                        <p>Correct answer: {{ r.correct_answer }}</p>
+                        {% if r.is_correct %}
+                            <p style="color: green;">Correct (+{{ r.marks }})</p>
+                        {% else %}
+                            <p style="color: red;">Incorrect</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No student has taken this quiz yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

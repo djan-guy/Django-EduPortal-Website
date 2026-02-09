@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Quiz Page
+{% endblock %}
+
+{% block content %}
+<h2>{{ quiz.name }} Quiz Page</h2>
+<h2>{{ user.username }}</h2>
+<div class="container">
+    <h3>Available Functions</h3>
+    <div class="function">
+        <a href="/"> Return to Home</a>
+        <a href="{% url 'quizzes:list' %}">Back to quizzes</a>
+    </div>
+</div>
+{% if user.isTeacher %}
+    {% for question in questions %}
+        <div class="container">
+            <h3>{{ question.text }}</h3>
+            <p>A: {{ question.option_a }}</p>
+            <p>B: {{ question.option_b }}</p>
+            <p>C: {{ question.option_c }}</p>
+            <p><strong>Correct Answer:</strong> {{ question.correct_answer }}</p>
+            <p>Marks: {{ question.marks }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <form method="post" action="{% url 'quizzes:quiz-submit' quiz.id %}">
+        {% csrf_token %}
+        {% for question in questions %}
+            <div class="container">
+                <h3>{{ question.text }}</h3>
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_a }}">
+                    {{ question.option_a }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_b }}">
+                    {{ question.option_b }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ question.id }}" value="{{ question.option_c }}">
+                    {{ question.option_c }}
+                </label><br>
+                <p>Marks: {{ question.marks }}</p>
+            </div>
+        {% endfor %}
+        <div class="container">
+            <button type="submit">Submit Quiz</button>
+        </div>
+    </form>
+{% endif %}
+
+{% endblock %}

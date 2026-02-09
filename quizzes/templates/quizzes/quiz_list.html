@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    EduPortal - Quizzes
+{% endblock %}
+
+{% block content %}
+    {% if course %}
+        <h2>{{ course.name }} Quizzes</h2>
+    {% else %}
+        <h2>All Quizzes</h2>
+    {% endif %}
+    <h2>{{ user.username }}</h2>
+    <div class="container">
+        <h3>Available Functions</h3>
+        <div class="function">
+            <a href="/"> Return to Home</a>
+            {% if user.isTeacher %}
+                <a href="{% url 'quizzes:quiz-new' %}">Create New Quiz</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="course-box">
+        {% for quiz in quizzes %}
+            <div class="container">
+                <div class="function">
+                <h3>{{ quiz.name }}</h3>
+                    <a href="{% url 'quizzes:quiz-page' quiz.id %}">View Quiz</a>
+                    {% if not user.isTeacher %}
+                        <a href="{% url 'quizzes:quiz-results' quiz.id %}">View Results</a>
+                    {% endif %}
+                {% if user.isTeacher %}
+                    <a href="{% url 'quizzes:quiz-results-teacher' quiz.id %}">View Student Results</a>
+                    <form action="{% url 'quizzes:quiz-delete' quiz.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Delete Quiz</button>
+                    </form>
+                {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="container">
+                <h3>No quizzes available for this course yet.</h3>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

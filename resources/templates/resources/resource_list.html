@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    EduPortal - Resources
+{% endblock %}
+
+{% block content %}
+    {% if course_name %}
+        <h2>{{ course_name }} Resources</h2>
+    {% else %}
+        <h2>All Resources</h2>
+    {% endif %}
+    <h2>{{ user.username }}</h2>
+    <div class="container">
+        <h3>Available Functions</h3>
+        <div class="function">
+            <a href="/"> Return to Home</a>
+            {% if user.isTeacher %}
+                <a href="{% url 'resources:resource-new' %}"> Upload Resource</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="course-box">
+        {% if resources %}
+            {% for resource in resources %}
+                <div class="container">
+                    <h3>{{ resource.title }}</h3>
+                    {% if user.isTeacher %}
+                    <form action="{% url 'resources:resource-delete' resource.pk %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Delete Resource</button>
+                    </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

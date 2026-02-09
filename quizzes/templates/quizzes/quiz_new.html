@@ -1,0 +1,77 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    EduPortal - New Quiz
+{% endblock %}
+
+{% block content %}
+    <h2>Create New Quiz</h2>
+    <h2>{{ user.username }}</h2>
+    <div class="container">
+        <h3>Available Functions</h3>
+        <div class="function">
+            <a href="/"> Return to Home</a>
+            <a href="{% url 'quizzes:list' %}"> Return to Quiz List</a>
+        </div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="container">
+            <h3>Quiz Info</h3>
+            {{ form.as_p }}
+        </div>
+            {{ formset.management_form }}
+            <div id="question-forms">
+                <div class="container">
+                {% for qform in formset %}
+                        <h3>Question</h3>
+                        {{ qform.as_p }}
+                        {% if not forloop.first %}
+                            <button type="button" class="remove-question-btn">Remove</button>
+                        {% endif %}
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <button type="button" id="add-question-btn">Add another question</button>
+            <button type="submit">Create Quiz</button>
+        </div>
+    </form>
+    <div id="empty-form" style="display:none;">
+        <div class="question-form">
+            {{ formset.empty_form.as_p }}
+            <button type="button" class="remove-question-btn">Remove</button>
+        </div>
+    </div>
+    <script>
+        const prefix = "{{ formset.prefix }}";
+        const addBtn = document.getElementById("add-question-btn");
+        const formContainer = document.getElementById("question-forms");
+        const totalForms = document.getElementById(`id_${prefix}-TOTAL_FORMS`);
+        addBtn.addEventListener("click", function () {
+            const currentCount = parseInt(totalForms.value);
+            const emptyFormHtml = document.getElementById("empty-form").innerHTML;
+            const newFormHtml = emptyFormHtml.replace(/__prefix__/g, currentCount);
+            formContainer.insertAdjacentHTML("beforeend", newFormHtml);
+            totalForms.value = currentCount + 1;
+            attachRemoveHandlers();
+        });
+        function attachRemoveHandlers() {
+            const removeButtons = document.querySelectorAll(".remove-question-btn");
+            removeButtons.forEach((btn) => {
+                btn.onclick = function () {
+                    const formDiv = btn.closest(".question-form");
+                    const deleteCheckbox = formDiv.querySelector(
+                        `input[type="checkbox"][name$="-DELETE"]`
+                    );
+                    if (deleteCheckbox) {
+                        deleteCheckbox.checked = true;
+                    }
+                    formDiv.style.display = "none";
+                };
+            });
+        }
+        attachRemoveHandlers();
+    </script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Quiz Results
+{% endblock %}
+
+{% block content %}
+<h2>{{ quiz.name }} Quiz Results</h2>
+<h2>{{ user.username }}</h2>
+<div class="container">
+    <h3>Available Functions</h3>
+    <div class="function">
+        <a href="/"> Return to Home</a>
+        <a href="{% url 'quizzes:list' %}">Back to quizzes</a>
+        {% if user.isTeacher %}
+            <a href="{% url 'quizzes:quiz-new' %}">Create New Quiz</a>
+        {% endif %}
+    </div>
+</div>
+<div class="container">
+<h3>Your Score: {{ obtained_marks }} / {{ total_marks }}</h3>
+</div>
+<div class="container">
+    {% for r in results %}
+        <div class="question-result">
+            <h4>{{ r.question }}</h4>
+            <p>Your answer: {{ r.user_answer }}</p>
+            <p>Correct answer: {{ r.correct_answer }}</p>
+            {% if r.is_correct %}
+                <p style="color: green;">Correct! +{{ r.marks }} marks</p>
+            {% else %}
+                <p style="color: red;">Incorrect</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
